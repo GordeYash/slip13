@@ -1,0 +1,44 @@
+pipeline{
+	agent any
+	stages{
+
+	stage('Clone Repository'){
+		steps{
+	git branch:'main',url:'https://github.com/GordeYash/slip13.git'
+}
+	}
+	stage('Build'){
+		steps{
+		echo "building the web app"
+	sh "mkdir -p build && cp index.html build/"
+	}
+}
+stage("Archive Artifacts"){
+	steps{
+archiveArtifacts artifacts: 'build/**',fingerprint:true
+	}
+	
+}
+stage ("Deploye to local web server"){
+	steps{
+	sh'''
+		echo "Deployeing to local server"
+		sudo mkdir -p /var/www/html/web-app
+		sudo rm -rf /var/www/html/web-app/*
+		sudo cp -r build/* /var/www/html/web-app/
+		sudo systemctl restart nginx
+		echo "Deploye Completed at $(date)"
+
+ '''
+}
+}
+	}
+post{
+	success{
+	echo "build & deployment is success"
+}failure{
+	echo "Build Failed"
+}
+}
+}
+}
