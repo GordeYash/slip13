@@ -36,8 +36,6 @@ stage ("Deploye to local web server"){
 post{
 	success{
 	echo "build & deployment is success"
-}failure{
-	echo "Build Failed"
 }
 }
 }
